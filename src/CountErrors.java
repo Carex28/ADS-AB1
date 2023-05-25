@@ -4,7 +4,7 @@ public class CountErrors {
         int count = 0;
         for (int i = 0; i < solution.length; i++) {
             for (int j = 0; j < solution.length; j++) {
-                if (i != j) {
+                if (i != j && (solution[i] > -1 || solution[j] > -1)) {
                     if (graph1[i][j] != graph2[solution[i]][solution[j]]) {
                         count++;
                     }
