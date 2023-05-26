@@ -8,8 +8,7 @@ public class GraphFinderGreedy {
         for (int i = 0; i < solution.length; i++) {
             if(solution[i]!=-1){                                                //check
                 for (int j = 0; j < solution.length; j++) {
-                    if (i != j && (solution[i] > -1 || solution[j] > -1)) {
-                        if(solution[j]!=-1){                                    //check
+                    if (i != j && solution[j] != -1) {                              //check
                             if (graph1[i][j] != graph2[solution[i]][solution[j]]) {
                                 count++;
                             }
@@ -20,8 +19,6 @@ public class GraphFinderGreedy {
                         // Wenn es nicht übereinstimmt, zähle count hoch
 
                     }
-
-                }
             }
         }
         return count / 2;
