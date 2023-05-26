@@ -19,23 +19,35 @@ public class GraphFinderBacktracking {
         return count / 2;
     }
 
-    
+
     public static int[] findBacktracking(int[][] graph1, int[][] graph2) {
-        int[] res = getStartArr(graph1.length);
+        int[] zstd = getStartArr(graph1.length);
         int[] best = findGreedy(graph1,graph2);
         int lowesError = countErrors(best,graph1,graph2);
-        backtracking(best,res,graph1,graph2,lowesError);
+        int[]used = new int[graph2.length];
+        used[0]=1;
+        backtracking(best,zstd,graph1,graph2,lowesError,1,used);
         return best;
     }
 
-    private static void backtracking(int[] best, int[] zstd, int[][] g1, int[][] g2, int lowestError) {
-
-        for(int n = 0 ; n<zstd.length;n++){
-
+    private static void backtracking(int[] best, int[] zstd, int[][] g1, int[][] g2, int lowestError, int pos, int[] unsed) {
+        if(pos > zstd.length-1){
+            return;
         }
-
-
-
+        int index =0;
+        int errors;
+        int [][]temp = new int[g2.length][zstd.length];
+        for(int n = pos ; n<zstd.length;n++){
+            for(int x = 0;x<g2.length;x++){
+                int[] neu = new int[zstd.length];
+                if(unsed[x]==0){
+                    zstd[n]=x;
+                }
+                neu = zstd;
+                temp[index]= neu;
+                index++;
+            }
+        }
 
         if(countErrors(zstd,g1,g2)<countErrors(best,g1,g2)){
             best = zstd;
