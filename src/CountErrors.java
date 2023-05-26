@@ -23,16 +23,4 @@ public class CountErrors {
         // /2 zwei, weil der Fehler doppelt vorkommt
         // (z.B. einmal bei 1 3 und bei 3 1)
     }
-//        int count = 0;
-//        for (int n = 1; n < solution.length; n++) {
-//            for (int x = 0; x < Math.min(graph1[0].length,graph2[0].length) ; x++) {
-//                if (solution[n] != -1) {
-//                    if (graph1[n][x] != graph2[solution[n]][x]) {
-//                        count++;
-//                    }
-//                }
-//            }
-//        }
-//        return count;
-//    }
 }
