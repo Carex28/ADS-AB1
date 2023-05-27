@@ -1,3 +1,4 @@
+import java.util.Arrays;
 public class GraphFinderBacktracking {
 
 
@@ -6,71 +7,109 @@ public class GraphFinderBacktracking {
         for (int i = 0; i < solution.length; i++) {
             if (solution[i] != -1) {
                 for (int j = 0; j < solution.length; j++) {
-                    if (i != j && solution[j] != -1 ) {                              //check
-                            if (graph1[i][j] != graph2[solution[i]][solution[j]]) {
-                                count++;
-                            }
+                    if (i != j && solution[j] != -1) { // check
+                        if (graph1[i][j] != graph2[solution[i]][solution[j]]) {
+                            count++;
                         }
                     }
+                }
             }
         }
         return count / 2;
     }
 
-    
     public static int[] findBacktracking(int[][] graph1, int[][] graph2) {
         int[] res = getStartArr(graph1.length);
-        int[] best = res;
-        int[] result = backtracking(best,res,graph1,graph2);
-        for(int a : result){
-            System.out.print(a + " ");
-        }
+        int[] best = fillBest(graph1.length); // Am Anfang 0, 1, 2, 3...,
+        int[] result = backtracking(best, res, graph1, graph2, 0);
+        showln(result); // hilfsfunktion, umd as ergebnis anzuzeigen
         return result;
     }
 
-    private static int[] backtracking(int[] best, int[] zstd, int[][] g1, int[][] g2) {
-        int[][] zustaende = new int[g2.length * g1.length][zstd.length]; // Menge ALLER möglichen Zustände, deshalb n1 * n2
+    private static int[] backtracking(int[] best, int[] zustand, int[][] g1, int[][] g2, int pos) {
+        int bestError;
+        if (pos == 0) {
+            bestError = Integer.MAX_VALUE; // Beim ersten durchlauf max_value fehler
+        } else {
+            bestError = countErrors(best, g1, g2); // sonst countErrors
+        }
 
-        for(int zstdIndex = 0; zstdIndex < zstd.length; zstdIndex++){ // der Index, der guckt, wie weit wir mit der Lösung sind(wenn diese Loop durch ist, gibt es kein Feld mehr mit -1)
 
-            int innerIndex = 0; // zustaende[innerIndex] wird mit den möglichen Zahlen beschrieben
+        if (!isValid(zustand) || countErrors(zustand, g1, g2) > bestError) { //zuerst gucken, ob Zustand Valide ist (Zahlen mehrmals vorkommen)
+            return null;         //bzw ob verbesserung überhaupt möglich ist -> null
+        }
 
-            whichNumber:for(int number = 0; number < g2.length; number++){ //Die Zahl, die in zustaende[innerIndex] reingeschrieben wird
+        if (isFull(zustand, pos)) { //Wenn alle Zahlen Voll sind (oder pos die letzte Position erreicht hat),
+            return zustand;         //wird der Zustand zurückgegeben
+        }
 
-                for(int j = 0; j < zstdIndex; j++){ // ob der Knoten schonmal in diesem Array benutzt wurde
 
-                    if(zustaende[innerIndex][j] == number){ // Wenn ja, dann geh zur nächsten Zahl, aber ändere nicht den Ort, wo die nächste Zahl reingeschrieben wird
-                        continue whichNumber;
-                    }
-                }
+        // Folgezustände:
+        int[][] zustaende = new int[g2.length][zustand.length];
+        for(int i = 0; i < zustaende.length; i++) {
+            zustaende[i] = zustand.clone(); // Man muss zustand clonen, bevor man ihn assigned, weil er sonst den zustand selbst verändert (Zustand wird als Pointer behandelt)
+            zustaende[i][pos] = i; // An Position i wird i assigned, somit entsteht eine Matrix mit allen möglichen Zuständen (inlusive den invaliden)            
+        }
 
-                for(int k = 0; k < g1.length; k++){ // Wie oft die Zahl in zustaende[innerIndex] reingeschrieben wird
-
-                    zustaende[innerIndex++][zstdIndex] = number; 
-                }
+        // Für jeden zustand tue:
+        for (int z = 0; z < zustaende.length; z++) {
+            // Rekursiver einstieg:
+            int[] loesung = backtracking(best, zustaende[z], g1, g2, pos + 1);
+            if (loesung != null && countErrors(loesung, g1, g2) < bestError) {// ignoriere die Lösung, wenn sie null ist (invalide oder nicht zu verbessern) oder
+                best = loesung;                                               // schlechter ist, als die bisher beste Lösung
+                bestError = countErrors(best, g1, g2);
             }
         }
-        best = zustaende[0];
-        for(int i = 1; i< zustaende.length; i++){                                                           // geh durch die Menge der Zustände 
-            int e;  
-            if((e = countErrors(zustaende[i], g1, g2)) < countErrors(best, g1, g2)){  // check ob der Zustand 0 fehler hat oder besser ist als der bisher beste
-                best = zustaende[i];                                                                       // mache diesen zum besten
-                if(e == 0){                                                                             //wenn das der beste ist, hör auf zu durchsuchen
-                    break;
-                }
-            }
-        }
-        zstd = best; // der bisher beste wird zum besten
         return best;
     }
 
+    private static int[] fillBest(int n) { // Alle Zahlen werden 
+        int[] res = new int[n];
+        for (int i = 0; i < n; i++) {
+            res[i] = i;
+        }
+        return res;
+    }
 
-    public static int[] getStartArr(int x){
+    private static boolean isFull(int[] zustand, int pos) {
+        if (pos == zustand.length || zustand[zustand.length - 1] > -1) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isValid(int[] zustand) {
+        for (int i = 0; i < zustand.length; i++) {
+            int current;
+            if ((current = zustand[i]) == -1) {
+                continue;
+            }
+            int count = 0;
+            for (int j = 0; j < zustand.length; j++) {
+                if (zustand[j] == current) {
+                    count++;
+                }
+            }
+            if (count >= 2) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static int[] getStartArr(int x) {
         int[] res = new int[x];
-        for (int n = 0; n < res.length; n++) {              //alle werte mit -1 belegen
+        for (int n = 0; n < res.length; n++) { // alle werte mit -1 belegen
             res[n] = -1;
         }
         return res;
+    }
+
+    private static void showln(int[] result) {
+        for (int a : result) {
+            System.out.print(a + " ");
+        }
+        System.out.println();
     }
 
 }
