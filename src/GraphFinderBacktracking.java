@@ -1,3 +1,4 @@
+import java.util.Arrays;
 public class GraphFinderBacktracking {
 
 
@@ -6,11 +7,9 @@ public class GraphFinderBacktracking {
         for (int i = 0; i < solution.length; i++) {
             if (solution[i] != -1) {
                 for (int j = 0; j < solution.length; j++) {
-                    if (i != j && (solution[i] > -1 || solution[j] > -1)) {
-                        if (solution[j] != -1) {
-                            if (graph1[i][j] != graph2[solution[i]][solution[j]]) {
-                                count++;
-                            }
+                    if (i != j && solution[j] != -1) { // check
+                        if (graph1[i][j] != graph2[solution[i]][solution[j]]) {
+                            count++;
                         }
                     }
                 }
@@ -19,79 +18,98 @@ public class GraphFinderBacktracking {
         return count / 2;
     }
 
-
     public static int[] findBacktracking(int[][] graph1, int[][] graph2) {
-        int[] zstd = getStartArr(graph1.length);
-        int[] best = findGreedy(graph1,graph2);
-        int lowesError = countErrors(best,graph1,graph2);
-        int[]used = new int[graph2.length];
-        used[0]=1;
-        backtracking(best,zstd,graph1,graph2,lowesError,1,used);
+        int[] res = getStartArr(graph1.length);
+        int[] best = fillBest(graph1.length); // Am Anfang 0, 1, 2, 3...,
+        int[] result = backtracking(best, res, graph1, graph2, 0);
+        showln(result); // hilfsfunktion, umd as ergebnis anzuzeigen
+        return result;
+    }
+
+    private static int[] backtracking(int[] best, int[] zustand, int[][] g1, int[][] g2, int pos) {
+        int bestError;
+        if (pos == 0) {
+            bestError = Integer.MAX_VALUE; // Beim ersten durchlauf max_value fehler
+        } else {
+            bestError = countErrors(best, g1, g2); // sonst countErrors
+        }
+
+
+        if (!isValid(zustand) || countErrors(zustand, g1, g2) > bestError) { //zuerst gucken, ob Zustand Valide ist (Zahlen mehrmals vorkommen)
+            return null;         //bzw ob verbesserung überhaupt möglich ist -> null
+        }
+
+        if (isFull(zustand, pos)) { //Wenn alle Zahlen Voll sind (oder pos die letzte Position erreicht hat),
+            return zustand;         //wird der Zustand zurückgegeben
+        }
+
+
+        // Folgezustände:
+        int[][] zustaende = new int[g2.length][zustand.length];
+        for(int i = 0; i < zustaende.length; i++) {
+            zustaende[i] = zustand.clone(); // Man muss zustand clonen, bevor man ihn assigned, weil er sonst den zustand selbst verändert (Zustand wird als Pointer behandelt)
+            zustaende[i][pos] = i; // An Position i wird i assigned, somit entsteht eine Matrix mit allen möglichen Zuständen (inlusive den invaliden)            
+        }
+
+        // Für jeden zustand tue:
+        for (int z = 0; z < zustaende.length; z++) {
+            // Rekursiver einstieg:
+            int[] loesung = backtracking(best, zustaende[z], g1, g2, pos + 1);
+            if (loesung != null && countErrors(loesung, g1, g2) < bestError) {// ignoriere die Lösung, wenn sie null ist (invalide oder nicht zu verbessern) oder
+                best = loesung;                                               // schlechter ist, als die bisher beste Lösung
+                bestError = countErrors(best, g1, g2);
+            }
+        }
         return best;
     }
 
-    private static void backtracking(int[] best, int[] zstd, int[][] g1, int[][] g2, int lowestError, int pos, int[] unsed) {
-        if(pos > zstd.length-1){
-            return;
+    private static int[] fillBest(int n) { // Alle Zahlen werden 
+        int[] res = new int[n];
+        for (int i = 0; i < n; i++) {
+            res[i] = i;
         }
-        int index =0;
-        int errors;
-        int [][]temp = new int[g2.length][zstd.length];
-        for(int n = pos ; n<zstd.length;n++){
-            for(int x = 0;x<g2.length;x++){
-                int[] neu = new int[zstd.length];
-                if(unsed[x]==0){
-                    zstd[n]=x;
-                }
-                neu = zstd;
-                temp[index]= neu;
-                index++;
-            }
-        }
-
-        if(countErrors(zstd,g1,g2)<countErrors(best,g1,g2)){
-            best = zstd;
-        }
-
+        return res;
     }
 
+    private static boolean isFull(int[] zustand, int pos) {
+        if (pos == zustand.length || zustand[zustand.length - 1] > -1) {
+            return true;
+        }
+        return false;
+    }
 
-    public static int[] getStartArr(int x){
+    private static boolean isValid(int[] zustand) {
+        for (int i = 0; i < zustand.length; i++) {
+            int current;
+            if ((current = zustand[i]) == -1) {
+                continue;
+            }
+            int count = 0;
+            for (int j = 0; j < zustand.length; j++) {
+                if (zustand[j] == current) {
+                    count++;
+                }
+            }
+            if (count >= 2) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static int[] getStartArr(int x) {
         int[] res = new int[x];
-        res[0] = 0;
-        for (int n = 1; n < res.length; n++) {              //alle werte ausser erstem mit -1 belegen
+        for (int n = 0; n < res.length; n++) { // alle werte mit -1 belegen
             res[n] = -1;
         }
         return res;
     }
 
-    public static int[] findGreedy(int[][] graph1, int[][] graph2) {
-        int[] res = new int[graph1.length];
-        res[0] = 0;
-        for (int n = 1; n < res.length; n++) {              //alle werte ausser erstem mit -1 belegen
-            res[n] = -1;
+    private static void showln(int[] result) {
+        for (int a : result) {
+            System.out.print(a + " ");
         }
-        int[] used = new int [graph2.length];               //array um benutzte knoten zu speichern
-        for(int x = 1; x<res.length; x++){
-            int errors = Integer.MAX_VALUE;             //error startwert
-            int lowesError = Integer.MAX_VALUE-1;       //vergleichswert für errors
-            int bestMatch = -1;                         //best passender knoten mit -1 init
-            for(int n =0; n<graph2.length;n++){         //für alle konten des graph2 abgleichen
-                if(used[n]==-1){                        //wenn knoten bereits verwendet wurde diesen überspringen
-                    continue;
-                }
-                res[x] = n;                             //in res an stelle x den aktuell projizierten knoten schreiben
-                errors = countErrors(res,graph1,graph2);    //fehler abfragen
-                if(errors < lowesError){                //wenn fehler niedriger
-                    used[n]=-1;
-                    lowesError = errors;                //vergleichswert aktualisieren
-                    bestMatch = n;                      //aktuellen konten als bestes match festlegen
-                }
-            }
-            res[x] = bestMatch;                         //res den besten knoten hinzufügen
-        }
-        //System.out.println(Arrays.toString(res));
-        return res;
+        System.out.println();
     }
 
 }
