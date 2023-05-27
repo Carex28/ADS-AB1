@@ -1,4 +1,3 @@
-import java.util.Arrays;
 public class GraphFinderBacktracking {
 
 
@@ -63,7 +62,7 @@ public class GraphFinderBacktracking {
         return best;
     }
 
-    private static int[] fillBest(int n) { // Alle Zahlen werden 
+    private static int[] fillBest(int n) { // Zahlen werden dem Index her aufgefüllt
         int[] res = new int[n];
         for (int i = 0; i < n; i++) {
             res[i] = i;
@@ -72,7 +71,7 @@ public class GraphFinderBacktracking {
     }
 
     private static boolean isFull(int[] zustand, int pos) {
-        if (pos == zustand.length || zustand[zustand.length - 1] > -1) {
+        if (pos == zustand.length || zustand[zustand.length - 1] > -1) { // ob pos die Letzte Position erreicht hat oder das letzte Element nicht mehr -1 ist
             return true;
         }
         return false;
@@ -86,11 +85,11 @@ public class GraphFinderBacktracking {
             }
             int count = 0;
             for (int j = 0; j < zustand.length; j++) {
-                if (zustand[j] == current) {
+                if (zustand[j] == current) { // Zählt wie oft ein Element vorkommt
                     count++;
                 }
             }
-            if (count >= 2) {
+            if (count >= 2) { // Wenn ein Element 2 mal oder mehr vorkommt, zählt es als invalid
                 return false;
             }
         }
@@ -105,6 +104,9 @@ public class GraphFinderBacktracking {
         return res;
     }
 
+    /**
+     * Hilfsfunktion für das Zeigen von Arrays
+     */
     private static void showln(int[] result) {
         for (int a : result) {
             System.out.print(a + " ");
