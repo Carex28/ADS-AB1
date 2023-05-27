@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class GraphFinderBacktracking {
 
 
@@ -21,7 +23,7 @@ public class GraphFinderBacktracking {
         int[] res = getStartArr(graph1.length);
         int[] best = fillBest(graph1.length); // Am Anfang 0, 1, 2, 3...,
         int[] result = backtracking(best, res, graph1, graph2, 0);
-        showln(result); // hilfsfunktion, umd as ergebnis anzuzeigen
+        System.out.println(Arrays.toString(result));
         return result;
     }
 
@@ -102,16 +104,6 @@ public class GraphFinderBacktracking {
             res[n] = -1;
         }
         return res;
-    }
-
-    /**
-     * Hilfsfunktion für das Zeigen von Arrays
-     */
-    private static void showln(int[] result) {
-        for (int a : result) {
-            System.out.print(a + " ");
-        }
-        System.out.println();
     }
 
 }
