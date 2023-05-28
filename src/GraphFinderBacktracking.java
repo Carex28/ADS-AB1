@@ -1,3 +1,4 @@
+import java.util.Arrays;
 
 public class GraphFinderBacktracking {
 
@@ -50,7 +51,7 @@ public class GraphFinderBacktracking {
         int[][] zustaende = new int[g2.length][zustand.length];
         for(int i = 0; i < zustaende.length; i++) {
             zustaende[i] = zustand.clone(); // Man muss zustand clonen, bevor man ihn assigned, weil er sonst den zustand selbst verändert (Zustand wird als Pointer behandelt)
-            zustaende[i][pos] = i; // An Position i wird i assigned, somit entsteht eine Matrix mit allen möglichen Zuständen (inlusive den invaliden)            
+            zustaende[i][pos] = i; // An Position i wird i assigned, somit entsteht eine Matrix mit allen möglichen Zuständen (inlusive den invaliden)  #
         }
 
         // Für jeden zustand tue:
