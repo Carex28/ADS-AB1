@@ -14,11 +14,6 @@ public class GraphFinderGreedy {
                                 count++;
                             }
                         }
-                        // Vergleiche ein Feld im Graph1 mit dem dazugehörigen
-                        // Feld in Graph2 (dazugehörig heißt, dass solution diese
-                        // Felder verbindet))
-                        // Wenn es nicht übereinstimmt, zähle count hoch
-
                     }
             }
         }
