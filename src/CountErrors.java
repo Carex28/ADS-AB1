@@ -1,6 +1,7 @@
 public class CountErrors {
     //test
     public static int countErrors(int[] solution, int[][] graph1, int[][] graph2) {
+        // O(n^2)
         int count = 0;
         for (int i = 0; i < solution.length; i++) {
             if (solution[i] != -1) {
