@@ -20,6 +20,8 @@ public class GraphFinderBacktracking {
     }
 
     public static int[] findBacktracking(int[][] graph1, int[][] graph2) {
+        //schlimmsten fall  O(n!)
+        //besten  O(n)
         int[] res = getStartArr(graph1.length);
         int[] best = fillBest(graph1.length); // Am Anfang 0, 1, 2, 3...,
         int[] result = backtracking(best, res, graph1, graph2, 0);

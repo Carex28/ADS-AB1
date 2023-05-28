@@ -4,6 +4,7 @@ public class GraphFinderGreedy {
 
 
     public static int countErrors(int[] solution, int[][] graph1, int[][] graph2) {
+        // O(n^2)
         int count = 0;
         for (int i = 0; i < solution.length; i++) {
             if (solution[i] != -1) {
@@ -26,6 +27,7 @@ public class GraphFinderGreedy {
 
 
     public static int[] findGreedy(int[][] graph1, int[][] graph2) {
+        // O(n^3)
         int[] res = new int[graph1.length];
         res[0] = 0;
         for (int n = 1; n < res.length; n++) {              //alle werte ausser erstem mit -1 belegen
