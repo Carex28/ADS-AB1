@@ -1,3 +1,5 @@
+package Abgabe1;
+
 public class CountErrors {
     //test
     public static int countErrors(int[] solution, int[][] graph1, int[][] graph2) {

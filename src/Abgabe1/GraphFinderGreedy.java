@@ -40,10 +40,10 @@ public class GraphFinderGreedy {
                     res[x] = n;                             //in res an stelle x den aktuell projizierten knoten schreiben
                     errors = countErrors(res,graph1,graph2);    //fehler abfragen
                     if(errors < lowesError){                //wenn fehler niedriger
+                        used[n]=-1;
                         lowesError = errors;                //vergleichswert aktualisieren
                         bestMatch = n;                      //aktuellen konten als bestes match festlegen
                     }
-                    used[bestMatch]=-1;
                 }
                 res[x] = bestMatch;                         //res den besten knoten hinzufügen
         }
