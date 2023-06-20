@@ -1,3 +1,4 @@
+package Abgabe1;
 
 public class GraphFinderBacktracking {
 

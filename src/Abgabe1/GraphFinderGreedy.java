@@ -1,3 +1,5 @@
+package Abgabe1;
+
 import java.util.Arrays;
 
 public class GraphFinderGreedy {
