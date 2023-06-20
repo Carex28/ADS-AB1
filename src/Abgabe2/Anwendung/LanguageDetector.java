@@ -1,4 +1,4 @@
-package Abgabe2;
+package Abgabe2.Anwendung;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -36,12 +36,10 @@ public class LanguageDetector {
 
     public int getCount(String ngram, String language) {
 	// FIXME: copy solution from Exercise 2 here.
-        return 1;
     }
 	
     public HashMap<Integer> apply(String text) {
 	// FIXME
-        return null;
     }
 	
     public static void main(String[] args) {

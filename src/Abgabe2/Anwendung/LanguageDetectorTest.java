@@ -1,4 +1,4 @@
-package Abgabe2;
+package Abgabe2.Anwendung;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
