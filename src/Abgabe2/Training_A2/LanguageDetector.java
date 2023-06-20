@@ -1,4 +1,4 @@
-package Abgabe2.Training;
+package Abgabe2.Training_A2;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -8,39 +8,36 @@ import java.io.Reader;
 import java.lang.reflect.Array;
 import java.util.LinkedList;
 
-
 public class LanguageDetector {
-
 
     public static class HashMap<T> {
 
-	// FIXME: copy solution from Exercise 1 here.
-		
-    }	
+        // FIXME: copy solution from Exercise 1 here.
+
+    }
 
     // n = the length of n-grams to use
     int n;
 
     // N = the size of the language-specific hash tables ("Tabelle 2")
-    int N; 
-	
+    int N;
+
     public LanguageDetector(int n, int N) {
-	this.n = n;
-	this.N = N;
-	// FIXME
+        this.n = n;
+        this.N = N;
+        // FIXME
     }
-	
+
     public void learnLanguage(String language, String text) {
-	// FIXME
+        // FIXME
     }
 
     public int getCount(String ngram, String language) {
-	// FIXME
+        // FIXME
         return -1;
     }
-	
-	
+
     public static void main(String[] args) {
     }
-	
+
 }
