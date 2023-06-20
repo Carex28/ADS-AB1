@@ -36,6 +36,7 @@ public class LanguageDetector {
 
     public int getCount(String ngram, String language) {
 	// FIXME
+        return -1;
     }
 	
 	
