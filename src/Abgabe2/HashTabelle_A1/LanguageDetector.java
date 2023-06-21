@@ -18,23 +18,25 @@ public class LanguageDetector {
 
 		Entry[] table;
 		int basis;
-		int N;
+		// capacity = N
+		int capacity;
+		// number of Entries
 		int count;
 
 		public HashMap(int N, int basis) {
 			table = (Entry[]) Array.newInstance(Entry[].class.getComponentType(), N);
 			this.basis = basis;
-			this.N = N;
+			this.capacity = N;
 			this.count = 0;
 		}
 
 		public double fillRatio() {
-			return (double) count / (double) N;
+			return (double) count / (double) capacity;
 		}
 
 		public int hashCode(String s) {
 			int result = 0;
-			for (int i = 0; i < N; i++) {
+			for (int i = 0; i < capacity; i++) {
 				result = sondierung(i, s, result);
 				if (table[result] == null) { // Wenn platz noch nicht besetzt, return result
 					return result;
@@ -47,7 +49,7 @@ public class LanguageDetector {
 			if (i == 0) { // g(0) = h(s)
 				return hash(s);
 			} else { // g(m) =( g(m) + 2 * m + 1) % N
-				return (result + 2 * (i - 1) + 1) % N;
+				return (result + 2 * (i - 1) + 1) % capacity;
 			}
 		}
 
@@ -55,7 +57,7 @@ public class LanguageDetector {
 			char[] cs = s.toCharArray(); // String zu CharArray
 			double result = 0;
 			for (int i = 0; i < cs.length; i++) { // Funktion in Aufgabenstellung angewandt
-				result += (cs[cs.length - i - 1] * Math.pow(basis, i)) % N;
+				result = (result + cs[cs.length - i - 1] * Math.pow(basis, i)) % capacity;
 			}
 			return (int) result;
 		}
@@ -63,7 +65,7 @@ public class LanguageDetector {
 		public T get(String key) {
 			Entry entry;
 			int hashCode = 0;
-			for (int i = 0; i < N; i++) {
+			for (int i = 0; i < capacity; i++) {
 				hashCode = sondierung(i, key, hashCode);
 				entry = table[hashCode];
 				if (entry == null) { // Wenn key nicht existent, return null
@@ -78,7 +80,7 @@ public class LanguageDetector {
 
 		public boolean add(String key, T value) {
 			int hashCode = 0;
-			for (int i = 0; i < N; i++) {
+			for (int i = 0; i < capacity; i++) {
 				hashCode = sondierung(i, key, hashCode);
 				if (hashCode < 0) { // Wenn sondierung -1 -> kein Platz in HashMap, return false
 					return false;
@@ -92,7 +94,6 @@ public class LanguageDetector {
 			}
 			return false;
 		}
-
 	}
 
 	public static void main(String[] args) {
