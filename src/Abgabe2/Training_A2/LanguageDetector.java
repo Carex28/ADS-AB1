@@ -118,21 +118,31 @@ public class LanguageDetector {
         languages = new HashMap<>(N, 31);
     }
 
-    public void learnLanguage(String language, String text) {
-        if (languages.get(language) == null) {
-            languages.add(language, new HashMap<>(N, 31));
-        }
-        String[] ngrams = new String[text.length() - (n - 1)];
+    // Hilfsfunktion
+    private String[] getNGrams(String text) {
+        String[] ngrams = new String[text.length() - (this.n - 1)]; // Länge des Textes - (länge n-grams - 1), da der
+                                                                    // Index first n stellen vor dem ende aufhört, minus
+                                                                    // 1 weil arrays mit 0 anfangen
         int first = 0;
-        int second = n;
+        int second = this.n;
         int index = 0;
         while (index < ngrams.length) {
-            ngrams[index++] = text.substring(first++, second++);
+            ngrams[index++] = text.substring(first++, second++); // inkrementiere um 1, bis array befüllt ist
         }
-        for (int i = 0; i < ngrams.length; i++) {
-            if (languages.get(language).get(ngrams[i]) == null) {
-                languages.get(language).add(ngrams[i], 1);
-            } else {
+        return ngrams;
+    }
+
+    public void learnLanguage(String language, String text) {
+        if (languages.get(language) == null) { // Wenn Sprache noch nicht in der Map
+            languages.add(language, new HashMap<>(N, 31)); // Füge neue Map für die Sprache hinzu
+        }
+
+        String[] ngrams = getNGrams(text); // Holt die n-grams
+
+        for (int i = 0; i < ngrams.length; i++) { // Zähl jeden ngram
+            if (languages.get(language).get(ngrams[i]) == null) { // Wenn ngram noch nicht angelegt
+                languages.get(language).add(ngrams[i], 1); // Leg an und zähl auf 1
+            } else { // Wenn ngram schon angelegt, nimm alten wert und zähle eins hoch
                 languages.get(language).add(ngrams[i], languages.get(language).get(ngrams[i]) + 1);
             }
         }
@@ -143,15 +153,10 @@ public class LanguageDetector {
         if (map == null || map.get(ngram) == null) {
             return 0;
         }
-        return map.get(ngram);
+        return map.get(ngram); // Wie oft das n-gram in der Sprache vorkam
     }
 
     public static void main(String[] args) {
-        LanguageDetector l = new LanguageDetector(2, 10);
-        l.learnLanguage("ape", "banana banana");
-        for (int i = 0; i < 10; i++) {
-            System.out.println(l.languages.get("ape").table[i]);
-        }
     }
 
 }
