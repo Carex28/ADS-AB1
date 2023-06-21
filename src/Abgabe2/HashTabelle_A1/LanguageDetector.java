@@ -57,7 +57,7 @@ public class LanguageDetector {
 			char[] cs = s.toCharArray(); // String zu CharArray
 			double result = 0;
 			for (int i = 0; i < cs.length; i++) { // Funktion in Aufgabenstellung angewandt
-				result = (result + cs[cs.length - i - 1] * Math.pow(basis, i)) % capacity;
+				result = ((result * basis + cs[i]) % capacity);
 			}
 			return (int) result;
 		}
