@@ -71,7 +71,7 @@ public class LanguageDetector {
 				if (entry == null) { // Wenn key nicht existent, return null
 					return null;
 				}
-				if (entry.key == key) { // Wenn key übereinstimmt, return value
+				if (entry.key == key || entry.key.equals(key)) { // Wenn key übereinstimmt, return value
 					return entry.value;
 				} // sonst continue loop mit neuem hashCode
 			}
@@ -86,7 +86,8 @@ public class LanguageDetector {
 					return false;
 				}
 				if (table[hashCode] == null // Entweder Key gibt es noch nicht
-						|| table[hashCode].key == key) { // Oder Key gibt es schon (überschreibe Key)
+						|| table[hashCode].key == key || table[hashCode].key.equals(key)) { // Oder Key gibt es schon
+																							// (überschreibe Key)
 					count++;
 					table[hashCode] = new Entry(key, value);
 					return true;
