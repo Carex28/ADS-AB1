@@ -170,6 +170,7 @@ public class LanguageDetector {
         for (String ngram : ngrams) {
             int max = 0;
             String best = null;
+
             for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
                 if (sprache != null) {
                     if (result.get(sprache.key) == null) {
@@ -184,6 +185,7 @@ public class LanguageDetector {
                     }
                 }
             }
+
             if (best != null) {
                 int alt = result.get(best);
                 result.add(best, ++alt);
@@ -209,24 +211,6 @@ public class LanguageDetector {
         return maxLanguage;
     }
 
-
-    public HashMap<Integer> apply2(String text) {
-        String[] ngrams = getNGrams(text);                      //n-grame erstellen
-        HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
-
-        for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
-            int anz = 0;
-            if (sprache != null) {
-                for (String ngram : ngrams) {
-                    if (getCount(ngram, sprache.key) >= 1) {
-                        anz++;
-                    }
-                }
-                result.add(sprache.key, anz);
-            }
-        }
-        return result;
-    }
 
 
     private static String read(String filename) {
