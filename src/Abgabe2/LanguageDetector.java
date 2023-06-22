@@ -1,7 +1,13 @@
 package Abgabe2;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class LanguageDetector {
 
@@ -121,8 +127,8 @@ public class LanguageDetector {
         // Hilfsfunktion
         private String[] getNGrams(String text) {
             String[] ngrams = new String[text.length() - (this.n - 1)]; // Länge des Textes - (länge n-grams - 1), da der
-            // Index first n stellen vor dem ende aufhört, minus
-            // 1 weil arrays mit 0 anfangen
+                                                                        // Index first n stellen vor dem ende aufhört, minus
+                                                                        // 1 weil arrays mit 0 anfangen
             int first = 0;
             int second = this.n;
             int index = 0;
@@ -153,10 +159,39 @@ public class LanguageDetector {
             if (map == null || map.get(ngram) == null) {
                 return 0;
             }
-            return map.get(ngram);                                          // Wie oft das n-gram in der Sprache vorkam
+            return map.get(ngram);                                      // Wie oft das n-gram in der Sprache vorkam
         }
 
     public HashMap<Integer> apply(String text) {
+        String[] ngrams = getNGrams(text);                      //n-grame erstellen
+        HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
+        for (String ngram : ngrams) {
+            int max=0;
+            String best=null;
+            for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
+                if(sprache!=null){
+                    if(result.get(sprache.key)==null){
+                        result.add(sprache.key,0);
+                    }
+                    if(getCount(ngram,sprache.key)>=1){
+                        int anz =getCount(ngram,sprache.key);
+                        if (anz>max){
+                            max=anz;
+                            best = sprache.key;
+                        }
+                    }
+                }
+            }
+            if(best!=null){
+                int alt = result.get(best);
+                result.add(best,++alt);
+            }
+        }
+        return result;
+    }
+
+
+    public HashMap<Integer> apply2(String text) {
         String[] ngrams = getNGrams(text);                      //n-grame erstellen
         HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
 
@@ -164,7 +199,7 @@ public class LanguageDetector {
             int anz =0;
             if (sprache != null) {
                 for (String ngram : ngrams) {
-                    if(getCount(ngram,sprache.key)>1){
+                    if(getCount(ngram,sprache.key)>=1){
                         anz++;
                     }
                 }
@@ -305,6 +340,7 @@ public class LanguageDetector {
     }
 
         public static void main(String[] args) {
+        read("resources/alice");
         }
     }
 
