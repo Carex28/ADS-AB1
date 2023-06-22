@@ -110,8 +110,6 @@ public class LanguageDetector {
         }
     }
 
-
-
         public LanguageDetector(int n, int N) {
             this.n = n;
             this.N = N;
@@ -156,10 +154,33 @@ public class LanguageDetector {
             return map.get(ngram);                                          // Wie oft das n-gram in der Sprache vorkam
         }
 
-        public HashMap<Integer> apply(String text) {
-            // FIXME
-            return null;
+    public HashMap<Integer> apply(String text) {
+        String[] ngrams = getNGrams(text);
+        HashMap<Integer> result = new HashMap<>(N, 31);
+
+        for (String ngram : ngrams) {
+            int maxCount = 0;
+            String maxLanguage = null;
+
+            for (HashMap<HashMap<Integer>>.Entry languageMap : languages.table) {
+                if (languageMap != null) {
+                    Integer count = languageMap.value.get(ngram);
+                    if (count != null && count > maxCount) {
+                        maxCount = count;
+                        maxLanguage = languageMap.key;
+                    }
+                }
+            }
+
+            if (maxLanguage != null) {
+                result.add(maxLanguage, maxCount);
+            }
         }
+
+        return result;
+    }
+
+
 
     private static String read(String filename) {
         // !!! NO NEED TO CHANGE !!!
