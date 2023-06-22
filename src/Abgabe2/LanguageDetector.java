@@ -192,7 +192,7 @@ public class LanguageDetector {
         return result;
     }
 
-    public String getMaxLanguage(HashMap<Integer> map) {
+    public static String getMaxLanguage(HashMap<Integer> map) {
         int max = Integer.MIN_VALUE;
         String maxLanguage = null;
 
@@ -261,7 +261,7 @@ public class LanguageDetector {
 
     public static LanguageDetector runTest(String BASE, int n, int N) {
 
-        LanguageDetector ld = new LanguageDetector(2, 1001);
+        LanguageDetector ld = new LanguageDetector(n, N);
         ld.learnLanguage("english", read("resources/alice/alice.en.txt"));
         ld.learnLanguage("german", read("resources/alice/alice.de.txt"));
         ld.learnLanguage("esperanto", read("resources/alice/alice.eo.txt"));
@@ -362,7 +362,7 @@ public class LanguageDetector {
 
         };
 
-        int pass=0;
+        double pass=0;
         double time = currentTimeMillis();
         for (int i = 0; i < sentences.length; i++) {
             HashMap<Integer> map = ld.apply(sentences[i]);
@@ -371,9 +371,10 @@ public class LanguageDetector {
                 pass ++;
             }
         }
+
         double stoptime = currentTimeMillis();
-        System.out.println(pass +"/"+labels.length);
-        System.out.println("Dauer = " + (stoptime-time));
+        System.out.print((int)pass +"/"+labels.length + " = " + (int)((pass/labels.length)*100) + "% | ");
+        System.out.println("Dauer = " + ((stoptime-time)/1000L) + "s");
 
         assert sentences.length == labels.length;
         return null;
@@ -381,19 +382,14 @@ public class LanguageDetector {
 
     public static void main(String[] args) {
         for (int n = 1; n < 10; n++) {
-            System.out.println("\n");
-            System.out.println("\n");
-            System.out.println("\n");
-            System.out.println("n="+n + " N="+120001);
+            System.out.print("n="+n + " N=120.001" + " | ");
             runTest("", n, 120001);
         }
 
         for (int n = 1; n < 10; n++) {
-            System.out.println("\n");
-            System.out.println("\n");
-            System.out.println("\n");
-            System.out.println("n="+n + " N="+1200001);
+            System.out.print("n="+n + " N=1.200.001" + " | ");
             runTest("", n, 1200001);
+
         }
 
     }
