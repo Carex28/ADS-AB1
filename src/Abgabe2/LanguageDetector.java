@@ -49,14 +49,12 @@ public class LanguageDetector {
         }
 
         public int hashCode(String s) {
+            char[] cs = s.toCharArray();
             int result = 0;
-            for (int i = 0; i < capacity; i++) {
-                result = sondierung(i, s, result);
-                if (table[result] == null) {                        // Wenn platz noch nicht besetzt, return result
-                    return result;
-                }
+            for (char c : cs) {
+                result = (result * basis + c) % capacity;
             }
-            return -1;                                                // Wenn kein Platz frei return -1
+            return result;
         }
 
         private int sondierung(int i, String s, int result) {        // kollision behandeln
@@ -75,25 +73,6 @@ public class LanguageDetector {
             }
             return (int) result;
         }
-
-
-
-        private int sond(int i, String s) {        // kollision behandeln
-            if(i==0){
-                return hashCode(s);
-            }
-            return (sond(i-1,s) + 2*(i-1) +1)%n;
-        }
-        public T get1(String key) {
-            for (int i = 0; i < n; i++) {
-                Entry e = table[sond(i, key)];
-                if (e != null) {
-                    if (key.equals(e.key)) return e.value;
-                }
-            }
-            return null;
-        }
-
 
 
         public T get(String key) {
@@ -184,22 +163,19 @@ public class LanguageDetector {
         String bestMatch = null;
 
         for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
+            int anz =0;
             if (sprache != null) {
-                int sum = 0;
                 for (String ngram : ngrams) {
-                    Integer value = sprache.value.get(ngram);
-                    if (value != null) {
-                        sum += value;
+                    if(getCount(ngram,sprache.key)>1){
+                        anz++;
                     }
                 }
-                if (sum > max) {
-                    max = sum;
-                    bestMatch = sprache.key;
-                }
+                result.add(sprache.key,anz);
             }
         }
         return result;
     }
+
 
 
     public HashMap<Integer> apply2(String text) {
