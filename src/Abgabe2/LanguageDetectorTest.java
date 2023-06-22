@@ -1,6 +1,5 @@
 package Abgabe2;
 
-import Abgabe2.LanguageDetector;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +11,7 @@ public class LanguageDetectorTest {
 
 	@Test
 	public void testInit() {
-		Abgabe2.LanguageDetector.HashMap<Integer> m = new Abgabe2.LanguageDetector.HashMap<Integer>(10, 3);
+		LanguageDetector.HashMap<Integer> m = new LanguageDetector.HashMap<Integer>(10, 3);
 		assertEquals(m.table.length, 10);
 		for (int i = 0; i < m.table.length; ++i) {
 			assertEquals(m.table[i], null);
@@ -22,12 +21,12 @@ public class LanguageDetectorTest {
 	@Test
 	public void testHashcode() {
 		// a=97, b=98, c=99, d=100
-		Abgabe2.LanguageDetector.HashMap<Integer> m = new Abgabe2.LanguageDetector.HashMap<Integer>(1000000, 100);
+		LanguageDetector.HashMap<Integer> m = new LanguageDetector.HashMap<Integer>(1000000, 100);
 		assertEquals(m.hashCode("abc"), 979899);
 		assertEquals(m.hashCode("!!!abc"), 979899);
 		// check binary table
 
-		m = new Abgabe2.LanguageDetector.HashMap<Integer>(2, 2);
+		m = new LanguageDetector.HashMap<Integer>(2, 2);
 		assertEquals(m.hashCode("!!!abc"), 1);
 		assertEquals(m.hashCode("!!!ab"), 0);
 	}
@@ -35,27 +34,27 @@ public class LanguageDetectorTest {
 	@Test
 	public void testHashcodeOverflow() {
 		// avoid overflow -> proper use of modulo
-		Abgabe2.LanguageDetector.HashMap<Integer> m = new Abgabe2.LanguageDetector.HashMap<Integer>(100, 100);
+		LanguageDetector.HashMap<Integer> m = new LanguageDetector.HashMap<Integer>(100, 100);
 		assertEquals(m.hashCode("cccccccccc"), 99);
 		assertEquals(m.hashCode("dddddddddd"), 0);
 		assertEquals(m.hashCode("eeeeeeeeee"), 1);
 		assertEquals(m.hashCode("ffffffffff"), 2);
 	}
 
-	public void check(Abgabe2.LanguageDetector.HashMap<Integer> m, int pos, String key, int value) {
+	public void check(LanguageDetector.HashMap<Integer> m, int pos, String key, int value) {
 		// check that table has (key,value) at position 'pos'
 		assertTrue(m.table[pos].key == key);
 		assertTrue(m.table[pos].value == value);
 	}
 
-	public void checkGet(Abgabe2.LanguageDetector.HashMap<Integer> m, String key, int value) {
+	public void checkGet(LanguageDetector.HashMap<Integer> m, String key, int value) {
 		assertTrue(m.get(key) == value);
 	}
 
 	@Test
 	public void testInsert() {
 		// 9->57, C->67, M=77, W=87, 8I=297
-		Abgabe2.LanguageDetector.HashMap<Integer> m = new Abgabe2.LanguageDetector.HashMap<Integer>(10, 4);
+		LanguageDetector.HashMap<Integer> m = new LanguageDetector.HashMap<Integer>(10, 4);
 		m.add("9", 2);
 		m.add("C", 10);
 		check(m, 7, "9", 2);
@@ -73,7 +72,7 @@ public class LanguageDetectorTest {
 	@Test
 	public void testInsertGetFull1() {
 		// Tabelle mit 9 Einträgen. Können 9 Werte einfügen, danach nicht mehr.
-		Abgabe2.LanguageDetector.HashMap<Integer> m = new Abgabe2.LanguageDetector.HashMap<Integer>(9, 4);
+		LanguageDetector.HashMap<Integer> m = new LanguageDetector.HashMap<Integer>(9, 4);
 		assertEquals(0. / 9, m.fillRatio(), tolerance);
 		assertEquals(true, m.add("A", 1));
 		assertEquals(true, m.add("B", 2));
@@ -107,7 +106,7 @@ public class LanguageDetectorTest {
 	@Test
 	public void testGet() {
 		// 9=57, C=67, M=77, W=87, 8I=297
-		Abgabe2.LanguageDetector.HashMap<Integer> m = new LanguageDetector.HashMap<Integer>(10, 4);
+		LanguageDetector.HashMap<Integer> m = new LanguageDetector.HashMap<Integer>(10, 4);
 		m.add("9", 2);
 		m.add("C", 10);
 		m.add("M", 8);
