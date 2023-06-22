@@ -33,12 +33,15 @@ public class LanguageDetector {
         // number of Entries
         int count;
 
+        int n;
+
 
         public HashMap(int N, int basis) {
             table = (Entry[]) Array.newInstance(Entry[].class.getComponentType(), N);
             this.basis = basis;
             this.capacity = N;
             this.count = 0;
+            n=N;
         }
 
         public double fillRatio() {
@@ -59,7 +62,7 @@ public class LanguageDetector {
         private int sondierung(int i, String s, int result) {        // kollision behandeln
             if (i == 0) {                                            // g(0) = h(s)
                 return hash(s);
-            } else {                                                // g(m) =( g(m) + 2 * m + 1) % N
+            } else {                                                 // g(m) =( g(m) + 2 * m + 1) % N
                 return (result + 2 * (i - 1) + 1) % capacity;        //neuen Platz suchen
             }
         }
@@ -68,10 +71,30 @@ public class LanguageDetector {
             char[] cs = s.toCharArray();                            // String zu CharArray
             double result = 0;
             for (int i = 0; i < cs.length; i++) {                    // Funktion in Aufgabenstellung angewandt
-                result = ((result * basis + cs[i]) % capacity);        //ASCII wert des strings
+                result = ((result * basis + cs[i]) % capacity);     //ASCII wert des strings
             }
             return (int) result;
         }
+
+
+
+        private int sond(int i, String s) {        // kollision behandeln
+            if(i==0){
+                return hashCode(s);
+            }
+            return (sond(i-1,s) + 2*(i-1) +1)%n;
+        }
+        public T get1(String key) {
+            for (int i = 0; i < n; i++) {
+                Entry e = table[sond(i, key)];
+                if (e != null) {
+                    if (key.equals(e.key)) return e.value;
+                }
+            }
+            return null;
+        }
+
+
 
         public T get(String key) {
             Entry entry;
@@ -155,28 +178,50 @@ public class LanguageDetector {
         }
 
     public HashMap<Integer> apply(String text) {
-        String[] ngrams = getNGrams(text);
-        HashMap<Integer> result = new HashMap<>(N, 31);
+        String[] ngrams = getNGrams(text);                      //n-grame erstellen
+        HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
+        int max = 0;
+        String bestMatch = null;
 
-        for (String ngram : ngrams) {
-            int maxCount = 0;
-            String maxLanguage = null;
+        for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
+            if (sprache != null) {
+                int sum = 0;
+                for (String ngram : ngrams) {
+                    Integer value = sprache.value.get(ngram);
+                    if (value != null) {
+                        sum += value;
+                    }
+                }
+                if (sum > max) {
+                    max = sum;
+                    bestMatch = sprache.key;
+                }
+            }
+        }
+        return result;
+    }
 
-            for (HashMap<HashMap<Integer>>.Entry languageMap : languages.table) {
-                if (languageMap != null) {
-                    Integer count = languageMap.value.get(ngram);
-                    if (count != null && count > maxCount) {
-                        maxCount = count;
-                        maxLanguage = languageMap.key;
+
+    public HashMap<Integer> apply2(String text) {
+        String[] ngrams = getNGrams(text);                      //n-grame erstellen
+        HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
+
+        for (String ngram : ngrams) {                           //für jedes n-gram wird der max count in den sprachen gesucht
+            int max = 0;
+            String bestMatch = null;
+            for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {   //in jeder sprache wird der count berechnet(wenn Entry!= null)
+                if (sprache != null) {
+                    Integer count = sprache.value.get(ngram);       //für aktuelle sprache das value errechnen
+                    if (count != null && count > max) {            //wenn n-gram häufiger vorkommt
+                        max = count;                               //count anpassen
+                        bestMatch = sprache.key;                  //sprache setzen
                     }
                 }
             }
-
-            if (maxLanguage != null) {
-                result.add(maxLanguage, maxCount);
+            if (bestMatch != null) {
+                result.add(bestMatch, max);              //language als key und count wert als value
             }
         }
-
         return result;
     }
 
