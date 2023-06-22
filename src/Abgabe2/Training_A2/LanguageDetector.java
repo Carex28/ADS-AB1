@@ -44,17 +44,17 @@ public class LanguageDetector {
             int result = 0;
             for (int i = 0; i < capacity; i++) {
                 result = sondierung(i, s, result);
-                if (table[result] == null) { // Wenn platz noch nicht besetzt, return result
+                if (table[result] == null) {                // Wenn platz noch nicht besetzt, return result
                     return result;
                 }
             }
-            return -1; // Wenn kein Platz frei return -1
+            return -1;                                      // Wenn kein Platz frei return -1
         }
 
         private int sondierung(int i, String s, int result) {
-            if (i == 0) { // g(0) = h(s)
+            if (i == 0) {                                   // g(0) = h(s)
                 return hash(s);
-            } else { // g(m) =( g(m) + 2 * m + 1) % N
+            } else {                                        // g(m) =( g(m) + 2 * m + 1) % N
                 return (result + 2 * (i - 1) + 1) % capacity;
             }
         }
@@ -110,7 +110,7 @@ public class LanguageDetector {
     int N;
 
     // hashmap for learning the languages
-    HashMap<HashMap<Integer>> languages;
+    HashMap<HashMap<Integer>> languages;        //übergeordnete hashmap mit sprachen anstatt ngramen
 
     public LanguageDetector(int n, int N) {
         this.n = n;
@@ -127,22 +127,22 @@ public class LanguageDetector {
         int second = this.n;
         int index = 0;
         while (index < ngrams.length) {
-            ngrams[index++] = text.substring(first++, second++); // inkrementiere um 1, bis array befüllt ist
+            ngrams[index++] = text.substring(first++, second++);    // inkrementiere um 1, bis array befüllt ist
         }
         return ngrams;
     }
 
     public void learnLanguage(String language, String text) {
-        if (languages.get(language) == null) { // Wenn Sprache noch nicht in der Map
-            languages.add(language, new HashMap<>(N, 31)); // Füge neue Map für die Sprache hinzu
+        if (languages.get(language) == null) {                      // Wenn Sprache noch nicht in der Map
+            languages.add(language, new HashMap<>(N, 31));     // Füge neue Map für die Sprache hinzu
         }
 
-        String[] ngrams = getNGrams(text); // Holt die n-grams
+        String[] ngrams = getNGrams(text);                          // Holt die n-grams
 
-        for (int i = 0; i < ngrams.length; i++) { // Zähl jeden ngram
-            if (languages.get(language).get(ngrams[i]) == null) { // Wenn ngram noch nicht angelegt
-                languages.get(language).add(ngrams[i], 1); // Leg an und zähl auf 1
-            } else { // Wenn ngram schon angelegt, nimm alten wert und zähle eins hoch
+        for (int i = 0; i < ngrams.length; i++) {                   // Zähl jeden ngram
+            if (languages.get(language).get(ngrams[i]) == null) {   // Wenn ngram noch nicht angelegt
+                languages.get(language).add(ngrams[i], 1);          // Leg an und zähl auf 1
+            } else {                                                // Wenn ngram schon angelegt, nimm alten wert und zähle eins hoch
                 languages.get(language).add(ngrams[i], languages.get(language).get(ngrams[i]) + 1);
             }
         }
@@ -153,7 +153,7 @@ public class LanguageDetector {
         if (map == null || map.get(ngram) == null) {
             return 0;
         }
-        return map.get(ngram); // Wie oft das n-gram in der Sprache vorkam
+        return map.get(ngram);                                          // Wie oft das n-gram in der Sprache vorkam
     }
 
     public static void main(String[] args) {

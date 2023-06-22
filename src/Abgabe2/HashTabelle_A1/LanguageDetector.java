@@ -45,19 +45,19 @@ public class LanguageDetector {
 			return -1; 												// Wenn kein Platz frei return -1
 		}
 
-		private int sondierung(int i, String s, int result) {		//Horner-Schema
+		private int sondierung(int i, String s, int result) {		// kollision behandeln
 			if (i == 0) { 											// g(0) = h(s)
 				return hash(s);
 			} else { 												// g(m) =( g(m) + 2 * m + 1) % N
-				return (result + 2 * (i - 1) + 1) % capacity;
+				return (result + 2 * (i - 1) + 1) % capacity;		//neuen Platz suchen
 			}
 		}
 
-		private int hash(String s) {
+		private int hash(String s) {								// hash pos bestimmen
 			char[] cs = s.toCharArray(); 							// String zu CharArray
 			double result = 0;
 			for (int i = 0; i < cs.length; i++) { 					// Funktion in Aufgabenstellung angewandt
-				result = ((result * basis + cs[i]) % capacity);
+				result = ((result * basis + cs[i]) % capacity);		//ASCII wert des strings
 			}
 			return (int) result;
 		}
