@@ -119,7 +119,7 @@ public class LanguageDetectorTest {
 		assertEquals((int) m.get("M"), 8);
 		assertEquals((int) m.get("8I"), 17);
 	}
-
+	@Test
 	public void testLearnLanguage1() {
 		// 2-grams
 		LanguageDetector ld = new LanguageDetector(2, 1001);
@@ -143,6 +143,7 @@ public class LanguageDetectorTest {
 		assertEquals(0, ld.getCount("bu", "ape"));
 	}
 
+	@Test
 	public void testApply1() {
 		LanguageDetector ld = new LanguageDetector(2, 1001);
 		ld.learnLanguage("ape", "banana banana");
