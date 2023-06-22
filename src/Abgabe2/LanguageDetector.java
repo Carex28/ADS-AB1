@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Array;
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Objects;
+
+import static java.lang.System.currentTimeMillis;
 
 public class LanguageDetector {
 
@@ -47,7 +49,7 @@ public class LanguageDetector {
             this.basis = basis;
             this.capacity = N;
             this.count = 0;
-            n=N;
+            n = N;
         }
 
         public double fillRatio() {
@@ -118,76 +120,93 @@ public class LanguageDetector {
         }
     }
 
-        public LanguageDetector(int n, int N) {
-            this.n = n;
-            this.N = N;
-            languages = new HashMap<HashMap<Integer>>(N, 31);
+    public LanguageDetector(int n, int N) {
+        this.n = n;
+        this.N = N;
+        languages = new HashMap<HashMap<Integer>>(N, 31);
+    }
+
+    // Hilfsfunktion
+    private String[] getNGrams(String text) {
+        String[] ngrams = new String[text.length() - (this.n - 1)]; // Länge des Textes - (länge n-grams - 1), da der
+        // Index first n stellen vor dem ende aufhört, minus
+        // 1 weil arrays mit 0 anfangen
+        int first = 0;
+        int second = this.n;
+        int index = 0;
+        while (index < ngrams.length) {
+            ngrams[index++] = text.substring(first++, second++);    // inkrementiere um 1, bis array befüllt ist
+        }
+        return ngrams;
+    }
+
+    public void learnLanguage(String language, String text) {
+        if (languages.get(language) == null) {                      // Wenn Sprache noch nicht in der Map
+            languages.add(language, new HashMap<>(N, 31));     // Füge neue Map für die Sprache hinzu
         }
 
-        // Hilfsfunktion
-        private String[] getNGrams(String text) {
-            String[] ngrams = new String[text.length() - (this.n - 1)]; // Länge des Textes - (länge n-grams - 1), da der
-                                                                        // Index first n stellen vor dem ende aufhört, minus
-                                                                        // 1 weil arrays mit 0 anfangen
-            int first = 0;
-            int second = this.n;
-            int index = 0;
-            while (index < ngrams.length) {
-                ngrams[index++] = text.substring(first++, second++);    // inkrementiere um 1, bis array befüllt ist
-            }
-            return ngrams;
-        }
+        String[] ngrams = getNGrams(text);                          // Holt die n-grams
 
-        public void learnLanguage(String language, String text) {
-            if (languages.get(language) == null) {                      // Wenn Sprache noch nicht in der Map
-                languages.add(language, new HashMap<>(N, 31));     // Füge neue Map für die Sprache hinzu
-            }
-
-            String[] ngrams = getNGrams(text);                          // Holt die n-grams
-
-            for (int i = 0; i < ngrams.length; i++) {                   // Zähl jeden ngram
-                if (languages.get(language).get(ngrams[i]) == null) {   // Wenn ngram noch nicht angelegt
-                    languages.get(language).add(ngrams[i], 1);          // Leg an und zähl auf 1
-                } else {                                                // Wenn ngram schon angelegt, nimm alten wert und zähle eins hoch
-                    languages.get(language).add(ngrams[i], languages.get(language).get(ngrams[i]) + 1);
-                }
+        for (int i = 0; i < ngrams.length; i++) {                   // Zähl jeden ngram
+            if (languages.get(language).get(ngrams[i]) == null) {   // Wenn ngram noch nicht angelegt
+                languages.get(language).add(ngrams[i], 1);          // Leg an und zähl auf 1
+            } else {                                                // Wenn ngram schon angelegt, nimm alten wert und zähle eins hoch
+                languages.get(language).add(ngrams[i], languages.get(language).get(ngrams[i]) + 1);
             }
         }
+    }
 
-        public int getCount(String ngram, String language) {
-            var map = languages.get(language);
-            if (map == null || map.get(ngram) == null) {
-                return 0;
-            }
-            return map.get(ngram);                                      // Wie oft das n-gram in der Sprache vorkam
+    public int getCount(String ngram, String language) {
+        var map = languages.get(language);
+        if (map == null || map.get(ngram) == null) {
+            return 0;
         }
+        return map.get(ngram);                                      // Wie oft das n-gram in der Sprache vorkam
+    }
 
     public HashMap<Integer> apply(String text) {
         String[] ngrams = getNGrams(text);                      //n-grame erstellen
         HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
         for (String ngram : ngrams) {
-            int max=0;
-            String best=null;
+            int max = 0;
+            String best = null;
             for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
-                if(sprache!=null){
-                    if(result.get(sprache.key)==null){
-                        result.add(sprache.key,0);
+                if (sprache != null) {
+                    if (result.get(sprache.key) == null) {
+                        result.add(sprache.key, 0);
                     }
-                    if(getCount(ngram,sprache.key)>=1){
-                        int anz =getCount(ngram,sprache.key);
-                        if (anz>max){
-                            max=anz;
+                    if (getCount(ngram, sprache.key) >= 1) {
+                        int anz = getCount(ngram, sprache.key);
+                        if (anz > max) {
+                            max = anz;
                             best = sprache.key;
                         }
                     }
                 }
             }
-            if(best!=null){
+            if (best != null) {
                 int alt = result.get(best);
-                result.add(best,++alt);
+                result.add(best, ++alt);
             }
         }
         return result;
+    }
+
+    public String getMaxLanguage(HashMap<Integer> map) {
+        int max = Integer.MIN_VALUE;
+        String maxLanguage = null;
+
+        for (HashMap<Integer>.Entry entry : map.table) {
+            if (entry != null) {
+                int value = entry.value;
+                if (value > max) {
+                    max = value;
+                    maxLanguage = entry.key;
+                }
+            }
+        }
+
+        return maxLanguage;
     }
 
 
@@ -196,14 +215,14 @@ public class LanguageDetector {
         HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
 
         for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
-            int anz =0;
+            int anz = 0;
             if (sprache != null) {
                 for (String ngram : ngrams) {
-                    if(getCount(ngram,sprache.key)>=1){
+                    if (getCount(ngram, sprache.key) >= 1) {
                         anz++;
                     }
                 }
-                result.add(sprache.key,anz);
+                result.add(sprache.key, anz);
             }
         }
         return result;
@@ -242,14 +261,21 @@ public class LanguageDetector {
 
     public static LanguageDetector runTest(String BASE, int n, int N) {
 
-        // FIXME: implement
+        LanguageDetector ld = new LanguageDetector(2, 1001);
+        ld.learnLanguage("english", read("resources/alice/alice.en.txt"));
+        ld.learnLanguage("german", read("resources/alice/alice.de.txt"));
+        ld.learnLanguage("esperanto", read("resources/alice/alice.eo.txt"));
+        ld.learnLanguage("finnish", read("resources/alice/alice.fi.txt"));
+        ld.learnLanguage("french", read("resources/alice/alice.fr.txt"));
+        ld.learnLanguage("italian", read("resources/alice/alice.it.txt"));
+
         // 1. read "Alice in Wonderland" in 6 languages using read(), see above
         // 2. learn the 6 languages with language detector
         // 3. apply language detector to the below 57 sample sentences.
         // measure accuracy, fillratio, execution time.
         // 4. run for different n-gram lengths + table sizes, and report.
 
-        String[] sentences = new String[] {
+        String[] sentences = new String[]{
 
                 // 11 x English
                 "I'm going to make him an offer he can't refuse.",
@@ -321,7 +347,8 @@ public class LanguageDetector {
                 "Se non hai mai pianto, i tuoi occhi non possono essere belli."
         };
 
-        String[] labels = new String[] {
+
+        String[] labels = new String[]{
 
                 "english", "english", "english", "english", "english", "english", "english", "english", "english",
                 "english", "english",
@@ -335,12 +362,40 @@ public class LanguageDetector {
 
         };
 
+        int pass=0;
+        double time = currentTimeMillis();
+        for (int i = 0; i < sentences.length; i++) {
+            HashMap<Integer> map = ld.apply(sentences[i]);
+            String sprache = getMaxLanguage(map);
+            if(Objects.equals(sprache, labels[i])){
+                pass ++;
+            }
+        }
+        double stoptime = currentTimeMillis();
+        System.out.println(pass +"/"+labels.length);
+        System.out.println("Dauer = " + (stoptime-time));
+
         assert sentences.length == labels.length;
         return null;
     }
 
-        public static void main(String[] args) {
-        read("resources/alice");
+    public static void main(String[] args) {
+        for (int n = 1; n < 10; n++) {
+            System.out.println("\n");
+            System.out.println("\n");
+            System.out.println("\n");
+            System.out.println("n="+n + " N="+120001);
+            runTest("", n, 120001);
         }
+
+        for (int n = 1; n < 10; n++) {
+            System.out.println("\n");
+            System.out.println("\n");
+            System.out.println("\n");
+            System.out.println("n="+n + " N="+1200001);
+            runTest("", n, 1200001);
+        }
+
     }
+}
 
