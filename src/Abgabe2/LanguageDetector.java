@@ -348,17 +348,20 @@ public class LanguageDetector {
 
         double pass=0;
         double time = currentTimeMillis();
+        HashMap<Integer> map = null;
         for (int i = 0; i < sentences.length; i++) {
-            HashMap<Integer> map = ld.apply(sentences[i]);
+            map = ld.apply(sentences[i]);
             String sprache = getMaxLanguage(map);
             if(Objects.equals(sprache, labels[i])){
                 pass ++;
             }
         }
 
+
+
         double stoptime = currentTimeMillis();
-        System.out.print((int)pass +"/"+labels.length + " = " + (int)((pass/labels.length)*100) + "% | ");
-        System.out.println("Dauer = " + ((stoptime-time)/1000L) + "s");
+        System.out.print((int)pass +"/"+labels.length + " = " + (int)((pass/labels.length)*100) + "% | " + "fillRatio = " + map.fillRatio());
+        System.out.println(" | Dauer = " + ((stoptime-time)/1000L) + "s");
 
         assert sentences.length == labels.length;
         return null;
