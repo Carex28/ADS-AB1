@@ -1,11 +1,13 @@
 package Abgabe2;
 
+import javax.print.FlavorException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -167,9 +169,11 @@ public class LanguageDetector {
     public HashMap<Integer> apply(String text) {
         String[] ngrams = getNGrams(text);                      //n-grame erstellen
         HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
+        LinkedList<String> bestC =new LinkedList<>();    //neu ergebnis hashmap
         for (String ngram : ngrams) {
-            int max = 0;
+            int max = -1;
             String best = null;
+
 
             for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
                 if (sprache != null) {
@@ -181,17 +185,49 @@ public class LanguageDetector {
                         if (anz > max) {
                             max = anz;
                             best = sprache.key;
+                            bestC = new LinkedList<>();
+                            bestC.add(sprache.key);
+                        }else if(anz==max){
+                            bestC.add(sprache.key);
                         }
                     }
                 }
             }
 
-            if (best != null) {
-                int alt = result.get(best);
-                result.add(best, ++alt);
+//            if(!bestC.isEmpty()&&bestC.size()>1){
+//                for(String s :bestC){
+//                    assert best != null;
+//                    best=lexiko(best,s,0);
+//                }
+//            }
+
+            for(String s : bestC){
+                String temp = s;
+                int alt = result.get(temp);
+                result.add(temp, ++alt);
             }
+            bestC = new LinkedList<>();
+
         }
+
         return result;
+    }
+
+    public static String lexiko(String s1, String s2, int i) {
+        if (s1.length() <= i) {
+            return s2;
+        }
+        if (s2.length() <= i) {
+            return s1;
+        }
+        if (s1.charAt(i) > s2.charAt(i)) {
+            return s2;
+        } else if (s1.charAt(i) < s2.charAt(i)) {
+            return s1;
+        } else {
+            return lexiko(s1, s2, ++i);
+        }
+
     }
 
     public static String getMaxLanguage(HashMap<Integer> map) {
@@ -200,10 +236,14 @@ public class LanguageDetector {
 
         for (HashMap<Integer>.Entry entry : map.table) {
             if (entry != null) {
+                //System.out.println(entry.key +" "+entry.value);
                 int value = entry.value;
                 if (value > max) {
                     max = value;
                     maxLanguage = entry.key;
+                }
+                if(value == max){
+                    maxLanguage = lexiko(entry.key,maxLanguage,0);
                 }
             }
         }
@@ -408,27 +448,28 @@ public class LanguageDetector {
 
         /*
 
-          n=1 N=120001  | Genauigkeit = 23/57 = 40%  | fillRatio(schnitt) = 0,065%  | Dauer = 0.477s
-          n=2 N=120001  | Genauigkeit = 40/57 = 70%  | fillRatio(schnitt) = 1,067%  | Dauer = 0.393s
-          n=3 N=120001  | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 5,508%  | Dauer = 0.318s
-        * n=4 N=120001  | Genauigkeit = 57/57 = 100% | fillRatio(schnitt) = 16,158% | Dauer = 0.303s
-        * n=5 N=120001  | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 31,858% | Dauer = 0.3s
-        * n=6 N=120001  | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 48,617% | Dauer = 0.286s
-          n=7 N=120001  | Genauigkeit = 54/57 = 94%  | fillRatio(schnitt) = 63,573% | Dauer = 0.282s
-          n=8 N=120001  | Genauigkeit = 51/57 = 89%  | fillRatio(schnitt) = 75,623% | Dauer = 0.276s
-          n=9 N=120001  | Genauigkeit = 44/57 = 77%  | fillRatio(schnitt) = 84,682% | Dauer = 1.026s
-          n=1 N=1200001 | Genauigkeit = 23/57 = 40%  | fillRatio(schnitt) = 0,005%  | Dauer = 3.322s
-          n=2 N=1200001 | Genauigkeit = 39/57 = 68%  | fillRatio(schnitt) = 0,107%  | Dauer = 3.171s
-          n=3 N=1200001 | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 0,550%  | Dauer = 3.093s
-        * n=4 N=1200001 | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 1,615%  | Dauer = 2.982s
-          n=5 N=1200001 | Genauigkeit = 55/57 = 96%  | fillRatio(schnitt) = 3,185%  | Dauer = 2.94s
-          n=6 N=1200001 | Genauigkeit = 55/57 = 96%  | fillRatio(schnitt) = 4,862%  | Dauer = 2.926s
-          n=7 N=1200001 | Genauigkeit = 54/57 = 94%  | fillRatio(schnitt) = 6,357%  | Dauer = 2.833s
-          n=8 N=1200001 | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 7,562%  | Dauer = 2.739s
-          n=9 N=1200001 | Genauigkeit = 46/57 = 80%  | fillRatio(schnitt) = 8,470%  | Dauer = 2.658s
-        > Gesamtdauer = 37.034s
+          n=1 N=120001  | Genauigkeit = 23/57 = 40%  | fillRatio(schnitt) = 0,065%  | Dauer = 0.302s
+          n=2 N=120001  | Genauigkeit = 39/57 = 68%  | fillRatio(schnitt) = 1,067%  | Dauer = 0.138s
+          n=3 N=120001  | Genauigkeit = 54/57 = 94%  | fillRatio(schnitt) = 5,508%  | Dauer = 0.144s
+        * n=4 N=120001  | Genauigkeit = 57/57 = 100% | fillRatio(schnitt) = 16,158% | Dauer = 0.122s
+        * n=5 N=120001  | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 31,858% | Dauer = 0.123s
+        * n=6 N=120001  | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 48,617% | Dauer = 0.115s
+          n=7 N=120001  | Genauigkeit = 55/57 = 96%  | fillRatio(schnitt) = 63,573% | Dauer = 0.124s
+          n=8 N=120001  | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 75,623% | Dauer = 0.115s
+          n=9 N=120001  | Genauigkeit = 45/57 = 78%  | fillRatio(schnitt) = 84,682% | Dauer = 0.942s
+          n=1 N=1200001 | Genauigkeit = 23/57 = 40%  | fillRatio(schnitt) = 0,005%  | Dauer = 1.323s
+          n=2 N=1200001 | Genauigkeit = 39/57 = 68%  | fillRatio(schnitt) = 0,107%  | Dauer = 1.252s
+          n=3 N=1200001 | Genauigkeit = 54/57 = 94%  | fillRatio(schnitt) = 0,550%  | Dauer = 1.254s
+        * n=4 N=1200001 | Genauigkeit = 57/57 = 100% | fillRatio(schnitt) = 1,615%  | Dauer = 1.224s
+        * n=5 N=1200001 | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 3,185%  | Dauer = 1.195s
+        * n=6 N=1200001 | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 4,862%  | Dauer = 1.117s
+          n=7 N=1200001 | Genauigkeit = 55/57 = 96%  | fillRatio(schnitt) = 6,357%  | Dauer = 1.118s
+          n=8 N=1200001 | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 7,562%  | Dauer = 1.097s
+          n=9 N=1200001 | Genauigkeit = 45/57 = 78%  | fillRatio(schnitt) = 8,470%  | Dauer = 1.037s
+        > Gesamtdauer = 19.829s
 
         */
+
     }
 }
 
