@@ -357,47 +357,74 @@ public class LanguageDetector {
             }
         }
 
+        double fillratioenglish= (ld.languages.get("english").fillRatio());
+        double fillratiogerman= (ld.languages.get("german").fillRatio());
+        double fillratioesperanto= (ld.languages.get("esperanto").fillRatio());
+        double fillratiofinnish= (ld.languages.get("finnish").fillRatio());
+        double fillratiofrench= (ld.languages.get("french").fillRatio());
+        double fillratioitalian= (ld.languages.get("italian").fillRatio());
+        double fillratioSchnitt = (int)((fillratioenglish+fillratiogerman+fillratioesperanto+fillratiofinnish+fillratiofrench+fillratioitalian)*100*100)/100.0/6;
 
 
+        int Genauigkeit=labels.length - (int)pass;
         double stoptime = currentTimeMillis();
-        System.out.print((int)pass +"/"+labels.length + " = " + (int)((pass/labels.length)*100) + "% | " + "fillRatio = " + map.fillRatio());
-        System.out.println(" | Dauer = " + ((stoptime-time)/1000L) + "s");
-
+        String space = " ";
+        String space2 = " ";
+        String space3 = " ";
+        if (Genauigkeit < 2){
+            System.out.print("* ");
+        }else {
+            System.out.print("  ");
+        }
+        if (Genauigkeit ==0){
+            space = "";
+        }
+        if (fillratioSchnitt >=10){
+            space2 = "";
+        }
+        if (ld.N >120001){
+            space3 = "";
+        }
+        System.out.print("n=" + ld.n + " N="+ ld.N + space3+ " | ");
+        System.out.print( "Genauigkeit = " +(int)pass +"/"+labels.length + " = " + (int)((pass/labels.length)*100) + "%"+ space+ " | " + "fillRatio(schnitt) = " + String.format("%.3f", fillratioSchnitt) + "%" +space2 /*+ ld.languages.get("english").capacity + "  " + ld.languages.get("english").count*/);
+        System.out.print(" | Dauer = " + ((stoptime-time)/1000L) + "s");
+        System.out.println();
         assert sentences.length == labels.length;
         return null;
     }
 
     public static void main(String[] args) {
+        double time = currentTimeMillis();
         for (int n = 1; n < 10; n++) {
-            System.out.print("n="+n + " N=120.001" + " | ");
             runTest("", n, 120001);
         }
 
         for (int n = 1; n < 10; n++) {
-            System.out.print("n="+n + " N=1.200.001" + " | ");
             runTest("", n, 1200001);
         }
-
+        double stoptime = currentTimeMillis();
+        System.out.print("> Gesamtdauer = " + ((stoptime-time)/1000L) + "s");
         /*
 
-        n=1 N=120.001 | 23/57 = 40% | Dauer = 0.479s
-        n=2 N=120.001 | 40/57 = 70% | Dauer = 0.386s
-        n=3 N=120.001 | 52/57 = 91% | Dauer = 0.323s
-        n=4 N=120.001 | 57/57 = 100% | Dauer = 0.304s
-        n=5 N=120.001 | 56/57 = 98% | Dauer = 0.296s
-        n=6 N=120.001 | 56/57 = 98% | Dauer = 0.294s
-        n=7 N=120.001 | 54/57 = 94% | Dauer = 0.287s
-        n=8 N=120.001 | 51/57 = 89% | Dauer = 0.277s
-        n=9 N=120.001 | 44/57 = 77% | Dauer = 0.866s
-        n=1 N=1.200.001 | 23/57 = 40% | Dauer = 3.269s
-        n=2 N=1.200.001 | 39/57 = 68% | Dauer = 3.183s
-        n=3 N=1.200.001 | 52/57 = 91% | Dauer = 3.086s
-        n=4 N=1.200.001 | 56/57 = 98% | Dauer = 3.079s
-        n=5 N=1.200.001 | 55/57 = 96% | Dauer = 2.989s
-        n=6 N=1.200.001 | 55/57 = 96% | Dauer = 2.867s
-        n=7 N=1.200.001 | 54/57 = 94% | Dauer = 2.821s
-        n=8 N=1.200.001 | 52/57 = 91% | Dauer = 2.717s
-        n=9 N=1.200.001 | 46/57 = 80% | Dauer = 2.619s
+          n=1 N=120001  | Genauigkeit = 23/57 = 40%  | fillRatio(schnitt) = 0,065%  | Dauer = 0.477s
+          n=2 N=120001  | Genauigkeit = 40/57 = 70%  | fillRatio(schnitt) = 1,067%  | Dauer = 0.393s
+          n=3 N=120001  | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 5,508%  | Dauer = 0.318s
+        * n=4 N=120001  | Genauigkeit = 57/57 = 100% | fillRatio(schnitt) = 16,158% | Dauer = 0.303s
+        * n=5 N=120001  | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 31,858% | Dauer = 0.3s
+        * n=6 N=120001  | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 48,617% | Dauer = 0.286s
+          n=7 N=120001  | Genauigkeit = 54/57 = 94%  | fillRatio(schnitt) = 63,573% | Dauer = 0.282s
+          n=8 N=120001  | Genauigkeit = 51/57 = 89%  | fillRatio(schnitt) = 75,623% | Dauer = 0.276s
+          n=9 N=120001  | Genauigkeit = 44/57 = 77%  | fillRatio(schnitt) = 84,682% | Dauer = 1.026s
+          n=1 N=1200001 | Genauigkeit = 23/57 = 40%  | fillRatio(schnitt) = 0,005%  | Dauer = 3.322s
+          n=2 N=1200001 | Genauigkeit = 39/57 = 68%  | fillRatio(schnitt) = 0,107%  | Dauer = 3.171s
+          n=3 N=1200001 | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 0,550%  | Dauer = 3.093s
+        * n=4 N=1200001 | Genauigkeit = 56/57 = 98%  | fillRatio(schnitt) = 1,615%  | Dauer = 2.982s
+          n=5 N=1200001 | Genauigkeit = 55/57 = 96%  | fillRatio(schnitt) = 3,185%  | Dauer = 2.94s
+          n=6 N=1200001 | Genauigkeit = 55/57 = 96%  | fillRatio(schnitt) = 4,862%  | Dauer = 2.926s
+          n=7 N=1200001 | Genauigkeit = 54/57 = 94%  | fillRatio(schnitt) = 6,357%  | Dauer = 2.833s
+          n=8 N=1200001 | Genauigkeit = 52/57 = 91%  | fillRatio(schnitt) = 7,562%  | Dauer = 2.739s
+          n=9 N=1200001 | Genauigkeit = 46/57 = 80%  | fillRatio(schnitt) = 8,470%  | Dauer = 2.658s
+        > Gesamtdauer = 37.034s
 
         */
     }
