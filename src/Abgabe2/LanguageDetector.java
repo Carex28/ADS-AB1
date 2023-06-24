@@ -404,6 +404,8 @@ public class LanguageDetector {
         }
         double stoptime = currentTimeMillis();
         System.out.print("> Gesamtdauer = " + ((stoptime-time)/1000L) + "s");
+
+
         /*
 
           n=1 N=120001  | Genauigkeit = 23/57 = 40%  | fillRatio(schnitt) = 0,065%  | Dauer = 0.477s
