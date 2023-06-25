@@ -166,7 +166,7 @@ public class LanguageDetector {
     public HashMap<Integer> apply(String text) {
         String[] ngrams = getNGrams(text);                          //n-grame erstellen
         HashMap<Integer> result = new HashMap<>(N, 31);        //neu ergebnis hashmap
-        LinkedList<String> bestC =new LinkedList<>();               //temporäre liste um sprachen mit maximalen, gleichen,score zu speichern
+        LinkedList<String> bestLL =new LinkedList<>();               //temporäre liste um sprachen mit maximalen, gleichen,score zu speichern
         for (String ngram : ngrams) {                               //jedes ngram wird in den sprachdaten gesucht
             int max = -1;
             String best = null;
@@ -178,25 +178,25 @@ public class LanguageDetector {
                     }
                     if (getCount(ngram, sprache.key) >= 1) {                        //wenn das ngram min 1 mal vorkommt
                         int anz = getCount(ngram, sprache.key);                     //wird gezählt wie oft es vorkommt
-                        if (anz > max) {                                            //wenn mehr wird die bestC liste neu erstellt und die beste sprache eingefügt
+                        if (anz > max) {                                            //wenn mehr wird die bestLL liste neu erstellt und die beste sprache eingefügt
                             max = anz;
                             best = sprache.key;
-                            bestC = new LinkedList<>();
-                            bestC.add(sprache.key);
+                            bestLL = new LinkedList<>();
+                            bestLL.add(sprache.key);
                         }else if(anz==max){
-                            bestC.add(sprache.key);                                 //wenn gleich wird die gleichrangige sprache der bestC hinzugefügt
+                            bestLL.add(sprache.key);                                 //wenn gleich wird die gleichrangige sprache der bestLL hinzugefügt
                         }
                     }
                 }
             }
 
-            for(String s : bestC){                                                  //bestC enthält, sprache/n mit maximalem und gleichen wert
+            for(String s : bestLL){                                                  //bestLL enthält, sprache/n mit maximalem und gleichen wert
                 String temp = s;
                 int alt = result.get(temp);                                         //alten punkte wert holen
-                result.add(temp, ++alt);                                            //für jede sprache in bestC wird in result ein punkt mehr vergeben
+                result.add(temp, ++alt);                                            //für jede sprache in bestLL wird in result ein punkt mehr vergeben
             }
 
-            bestC = new LinkedList<>();                                             //temporäre liste "leeren"
+            bestLL = new LinkedList<>();                                             //temporäre liste "leeren"
 
         }
 
