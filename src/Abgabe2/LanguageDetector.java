@@ -1,15 +1,12 @@
 package Abgabe2;
 
-import javax.print.FlavorException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Objects;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -174,7 +171,6 @@ public class LanguageDetector {
             int max = -1;
             String best = null;
 
-
             for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {       //in jeder sprache die nicht null ist
                 if (sprache != null) {
                     if (result.get(sprache.key) == null) {                          // beim ersten Ansehen wird ein eintrag erstellt
@@ -194,18 +190,12 @@ public class LanguageDetector {
                 }
             }
 
-//            if(!bestC.isEmpty()&&bestC.size()>1){
-//                for(String s :bestC){
-//                    assert best != null;
-//                    best=lexiko(best,s,0);
-//                }
-//            }
-
             for(String s : bestC){                                                  //bestC enthält, sprache/n mit maximalem und gleichen wert
                 String temp = s;
                 int alt = result.get(temp);                                         //alten punkte wert holen
                 result.add(temp, ++alt);                                            //für jede sprache in bestC wird in result ein punkt mehr vergeben
             }
+
             bestC = new LinkedList<>();                                             //temporäre liste "leeren"
 
         }
@@ -215,10 +205,10 @@ public class LanguageDetector {
 
     public static String lexiko(String s1, String s2, int i) {  //prüft auf lexikografische ordnung
         if (s1.length() <= i) {
-            return s2;
+            return s1;
         }
         if (s2.length() <= i) {
-            return s1;
+            return s2;
         }
         if (s1.charAt(i) > s2.charAt(i)) {
             return s2;
@@ -233,10 +223,12 @@ public class LanguageDetector {
     public static String getMaxLanguage(HashMap<Integer> map) {  //holt sich die sprache mit den meistren votes
         int max = -1;
         String maxLanguage = null;
+        //String print = "";
 
         for (HashMap<Integer>.Entry entry : map.table) {            //geht jede sprache durch, welcome nicht null ist
             if (entry != null) {
-                //System.out.println(entry.key +" "+entry.value);
+                //print += "["+ entry.key +", "+entry.value + "]";
+
                 int value = entry.value;
                 if (value > max) {                                  //wenn die votes größer sind, wird beste aktualisiert
                     max = value;
@@ -247,7 +239,7 @@ public class LanguageDetector {
                 }
             }
         }
-
+        //System.out.println(print);
         return maxLanguage;
     }
 
@@ -394,7 +386,7 @@ public class LanguageDetector {
         for (int i = 0; i < sentences.length; i++) {
             map = ld.apply(sentences[i]);
             String sprache = getMaxLanguage(map);
-            if(Objects.equals(sprache, labels[i])){
+            if(sprache.equals(labels[i])){
                 pass ++;
             }
         }
