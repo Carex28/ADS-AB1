@@ -472,6 +472,17 @@ public class LanguageDetector {
           n=9 N=1200001 | Genauigkeit = 45/57 = 78%  | fillRatio(schnitt) = 8,470%  | Dauer = 1.037s
         > Gesamtdauer = 19.829s
 
+            n=4 N=120.001 = beste Ergebnis, kürzeste Laufzeit, niedrigste Fillratio.
+
+            höchste Genrauigkeit bei n= 4-6.
+
+            n-gramme die zu klein sind haben zu wenig Aussagekraft, da sie zu häufig gefunden werden können und n-gramme die zu lang sind
+                        werden wahrscheinlich selten gefunden und haben deshalb auch eine niedrigere Aussagekraft.
+
+            N=1.200.001 scheint nur nachteile mit sich zu bringen da die Dauer deutlich steigt aber die Genauigkeit gleich bleibt,
+                        demnach ist de gewählte Größe N=120.001 für diese Anwendung, mit den gegeben Trainingsdaten, am besten.
+                        Sollten die Trainingsdaten deutlich umfangreicher werden könnte es sein das eine größere Tabelle benötigt wird.
+
         */
 
     }
