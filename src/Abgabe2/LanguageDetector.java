@@ -175,7 +175,7 @@ public class LanguageDetector {
             String best = null;
 
 
-            for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {       //in jeder sprache die nicht nul ist
+            for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {       //in jeder sprache die nicht null ist
                 if (sprache != null) {
                     if (result.get(sprache.key) == null) {                          // beim ersten Ansehen wird ein eintrag erstellt
                         result.add(sprache.key, 0);                                 //
