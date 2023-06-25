@@ -173,7 +173,7 @@ public class LanguageDetector {
         for (String ngram : ngrams) {                               //jedes ngram wird in den sprachdaten gesucht
             int max = -1;
             String best = null;
-
+            bestC = new LinkedList<>();                                             //temporäre liste "leeren"
 
             for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {       //in jeder sprache die nicht null ist
                 if (sprache != null) {
@@ -206,7 +206,7 @@ public class LanguageDetector {
                 int alt = result.get(temp);                                         //alten punkte wert holen
                 result.add(temp, ++alt);                                            //für jede sprache in bestC wird in result ein punkt mehr vergeben
             }
-            bestC = new LinkedList<>();                                             //temporäre liste "leeren"
+            
 
         }
 
@@ -234,7 +234,7 @@ public class LanguageDetector {
         int max = -1;
         String maxLanguage = null;
 
-        for (HashMap<Integer>.Entry entry : map.table) {            //geht jede sprache durch, welcome nicht null ist
+        for (HashMap<Integer>.Entry entry : map.table) {            //geht jede sprache durch, welche nicht null ist
             if (entry != null) {
                 //System.out.println(entry.key +" "+entry.value);
                 int value = entry.value;
