@@ -472,7 +472,7 @@ public class LanguageDetector {
           n=9 N=1200001 | Genauigkeit = 45/57 = 78%  | fillRatio(schnitt) = 8,470%  | Dauer = 1.037s
         > Gesamtdauer = 19.829s
 
-            n=4 N=120.001 = beste Ergebnis, kürzeste Laufzeit, niedrigste Fillratio.
+            n=4 N=120.001 = bestes Ergebnis, kurze Laufzeit, niedrigste Fillratio.
 
             höchste Genrauigkeit bei n= 4-6.
 
