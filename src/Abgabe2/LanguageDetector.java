@@ -1,15 +1,12 @@
 package Abgabe2;
 
-import javax.print.FlavorException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Objects;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -169,11 +166,10 @@ public class LanguageDetector {
     public HashMap<Integer> apply(String text) {
         String[] ngrams = getNGrams(text);                          //n-grame erstellen
         HashMap<Integer> result = new HashMap<>(N, 31);        //neu ergebnis hashmap
-        LinkedList<String> bestC =new LinkedList<>();               //temporäre liste um sprachen mit maximalen, gleichen,score zu speichern
+        LinkedList<String> bestLL =new LinkedList<>();               //temporäre liste um sprachen mit maximalen, gleichen,score zu speichern
         for (String ngram : ngrams) {                               //jedes ngram wird in den sprachdaten gesucht
             int max = -1;
             String best = null;
-            bestC = new LinkedList<>();                                             //temporäre liste "leeren"
 
             for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {       //in jeder sprache die nicht null ist
                 if (sprache != null) {
@@ -182,31 +178,25 @@ public class LanguageDetector {
                     }
                     if (getCount(ngram, sprache.key) >= 1) {                        //wenn das ngram min 1 mal vorkommt
                         int anz = getCount(ngram, sprache.key);                     //wird gezählt wie oft es vorkommt
-                        if (anz > max) {                                            //wenn mehr wird die bestC liste neu erstellt und die beste sprache eingefügt
+                        if (anz > max) {                                            //wenn mehr wird die bestLL liste neu erstellt und die beste sprache eingefügt
                             max = anz;
                             best = sprache.key;
-                            bestC = new LinkedList<>();
-                            bestC.add(sprache.key);
+                            bestLL = new LinkedList<>();
+                            bestLL.add(sprache.key);
                         }else if(anz==max){
-                            bestC.add(sprache.key);                                 //wenn gleich wird die gleichrangige sprache der bestC hinzugefügt
+                            bestLL.add(sprache.key);                                 //wenn gleich wird die gleichrangige sprache der bestLL hinzugefügt
                         }
                     }
                 }
             }
 
-//            if(!bestC.isEmpty()&&bestC.size()>1){
-//                for(String s :bestC){
-//                    assert best != null;
-//                    best=lexiko(best,s,0);
-//                }
-//            }
-
-            for(String s : bestC){                                                  //bestC enthält, sprache/n mit maximalem und gleichen wert
+            for(String s : bestLL){                                                  //bestLL enthält, sprache/n mit maximalem und gleichen wert
                 String temp = s;
                 int alt = result.get(temp);                                         //alten punkte wert holen
-                result.add(temp, ++alt);                                            //für jede sprache in bestC wird in result ein punkt mehr vergeben
+                result.add(temp, ++alt);                                            //für jede sprache in bestLL wird in result ein punkt mehr vergeben
             }
-            
+
+            bestLL = new LinkedList<>();                                             //temporäre liste "leeren"
 
         }
 
@@ -215,10 +205,10 @@ public class LanguageDetector {
 
     public static String lexiko(String s1, String s2, int i) {  //prüft auf lexikografische ordnung
         if (s1.length() <= i) {
-            return s2;
+            return s1;
         }
         if (s2.length() <= i) {
-            return s1;
+            return s2;
         }
         if (s1.charAt(i) > s2.charAt(i)) {
             return s2;
@@ -233,10 +223,12 @@ public class LanguageDetector {
     public static String getMaxLanguage(HashMap<Integer> map) {  //holt sich die sprache mit den meistren votes
         int max = -1;
         String maxLanguage = null;
+        //String print = "";
 
-        for (HashMap<Integer>.Entry entry : map.table) {            //geht jede sprache durch, welche nicht null ist
+        for (HashMap<Integer>.Entry entry : map.table) {            //geht jede sprache durch, welcome nicht null ist
             if (entry != null) {
-                //System.out.println(entry.key +" "+entry.value);
+                //print += "["+ entry.key +", "+entry.value + "]";
+
                 int value = entry.value;
                 if (value > max) {                                  //wenn die votes größer sind, wird beste aktualisiert
                     max = value;
@@ -247,7 +239,7 @@ public class LanguageDetector {
                 }
             }
         }
-
+        //System.out.println(print);
         return maxLanguage;
     }
 
@@ -394,7 +386,7 @@ public class LanguageDetector {
         for (int i = 0; i < sentences.length; i++) {
             map = ld.apply(sentences[i]);
             String sprache = getMaxLanguage(map);
-            if(Objects.equals(sprache, labels[i])){
+            if(sprache.equals(labels[i])){
                 pass ++;
             }
         }
