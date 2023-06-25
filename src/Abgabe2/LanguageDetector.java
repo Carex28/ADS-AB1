@@ -167,28 +167,28 @@ public class LanguageDetector {
     }
 
     public HashMap<Integer> apply(String text) {
-        String[] ngrams = getNGrams(text);                      //n-grame erstellen
-        HashMap<Integer> result = new HashMap<>(N, 31);    //neu ergebnis hashmap
-        LinkedList<String> bestC =new LinkedList<>();    //neu ergebnis hashmap
-        for (String ngram : ngrams) {
+        String[] ngrams = getNGrams(text);                          //n-grame erstellen
+        HashMap<Integer> result = new HashMap<>(N, 31);        //neu ergebnis hashmap
+        LinkedList<String> bestC =new LinkedList<>();               //temporäre liste um sprachen mit maximalen, gleichen,score zu speichern
+        for (String ngram : ngrams) {                               //jedes ngram wird in den sprachdaten gesucht
             int max = -1;
             String best = null;
 
 
-            for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {
+            for (HashMap<HashMap<Integer>>.Entry sprache : languages.table) {       //in jeder sprache die nicht nul ist
                 if (sprache != null) {
-                    if (result.get(sprache.key) == null) {
-                        result.add(sprache.key, 0);
+                    if (result.get(sprache.key) == null) {                          // beim ersten Ansehen wird ein eintrag erstellt
+                        result.add(sprache.key, 0);                                 //
                     }
-                    if (getCount(ngram, sprache.key) >= 1) {
-                        int anz = getCount(ngram, sprache.key);
-                        if (anz > max) {
+                    if (getCount(ngram, sprache.key) >= 1) {                        //wenn das ngram min 1 mal vorkommt
+                        int anz = getCount(ngram, sprache.key);                     //wird gezählt wie oft es vorkommt
+                        if (anz > max) {                                            //wenn mehr wird die bestC liste neu erstellt und die beste sprache eingefügt
                             max = anz;
                             best = sprache.key;
                             bestC = new LinkedList<>();
                             bestC.add(sprache.key);
                         }else if(anz==max){
-                            bestC.add(sprache.key);
+                            bestC.add(sprache.key);                                 //wenn gleich wird die gleichrangige sprache der bestC hinzugefügt
                         }
                     }
                 }
@@ -201,19 +201,19 @@ public class LanguageDetector {
 //                }
 //            }
 
-            for(String s : bestC){
+            for(String s : bestC){                                                  //bestC enthält, sprache/n mit maximalem und gleichen wert
                 String temp = s;
-                int alt = result.get(temp);
-                result.add(temp, ++alt);
+                int alt = result.get(temp);                                         //alten punkte wert holen
+                result.add(temp, ++alt);                                            //für jede sprache in bestC wird in result ein punkt mehr vergeben
             }
-            bestC = new LinkedList<>();
+            bestC = new LinkedList<>();                                             //temporäre liste "leeren"
 
         }
 
         return result;
     }
 
-    public static String lexiko(String s1, String s2, int i) {
+    public static String lexiko(String s1, String s2, int i) {  //prüft auf lexikografische ordnung
         if (s1.length() <= i) {
             return s2;
         }
@@ -230,19 +230,19 @@ public class LanguageDetector {
 
     }
 
-    public static String getMaxLanguage(HashMap<Integer> map) {
-        int max = Integer.MIN_VALUE;
+    public static String getMaxLanguage(HashMap<Integer> map) {  //holt sich die sprache mit den meistren votes
+        int max = -1;
         String maxLanguage = null;
 
-        for (HashMap<Integer>.Entry entry : map.table) {
+        for (HashMap<Integer>.Entry entry : map.table) {            //geht jede sprache durch, welcome nicht null ist
             if (entry != null) {
                 //System.out.println(entry.key +" "+entry.value);
                 int value = entry.value;
-                if (value > max) {
+                if (value > max) {                                  //wenn die votes größer sind, wird beste aktualisiert
                     max = value;
                     maxLanguage = entry.key;
                 }
-                if(value == max){
+                if(value == max){                                   //wenn gleichrangig wird nach lexikografischer ordnung entschieden
                     maxLanguage = lexiko(entry.key,maxLanguage,0);
                 }
             }
@@ -285,6 +285,7 @@ public class LanguageDetector {
 
     public static LanguageDetector runTest(String BASE, int n, int N) {
 
+        //ld erstellen und sprachen lernnen
         LanguageDetector ld = new LanguageDetector(n, N);
         ld.learnLanguage("english", read("resources/alice/alice.en.txt"));
         ld.learnLanguage("german", read("resources/alice/alice.de.txt"));
@@ -386,6 +387,7 @@ public class LanguageDetector {
 
         };
 
+        //ngramme prüfen und erkennen.
         double pass=0;
         double time = currentTimeMillis();
         HashMap<Integer> map = null;
@@ -397,6 +399,7 @@ public class LanguageDetector {
             }
         }
 
+        //füllstände
         double fillratioenglish= (ld.languages.get("english").fillRatio());
         double fillratiogerman= (ld.languages.get("german").fillRatio());
         double fillratioesperanto= (ld.languages.get("esperanto").fillRatio());
@@ -405,9 +408,10 @@ public class LanguageDetector {
         double fillratioitalian= (ld.languages.get("italian").fillRatio());
         double fillratioSchnitt = (int)((fillratioenglish+fillratiogerman+fillratioesperanto+fillratiofinnish+fillratiofrench+fillratioitalian)*100*100)/100.0/6;
 
-
         int Genauigkeit=labels.length - (int)pass;
+
         double stoptime = currentTimeMillis();
+        //print stuff...
         String space = " ";
         String space2 = " ";
         String space3 = " ";
